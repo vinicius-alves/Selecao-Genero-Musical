@@ -8,12 +8,24 @@ library(xml2)
 library(rvest)
 library(furrr)
 
+pop_func <- function(artist_link)  {
+
+  pop_page <- read_html(paste0("https://www.vagalume.com.br", artist_link, "popularidade/"))
+
+  J <- pop_page %>% html_nodes(".text") %>% html_text() %>% 
+    tail(1) %>% 
+    str_extract(., "(?<=está em )(.*)(?= pontos)") %>% 
+    str_replace(",", ".") %>% as.numeric() 
+
+  return(J)  
+}
+
 
 scrap_artist <- function(artist_link){
   # Reading the entire pages
   page <- read_html(paste0("https://www.vagalume.com.br", artist_link))
-  pop_page <- read_html(paste0("https://www.vagalume.com.br", artist_link, "popularidade/"))
-  
+
+
   # Getting desired variables
   A <- page %>% html_nodes(".darkBG") %>% html_text()
 
@@ -25,11 +37,10 @@ scrap_artist <- function(artist_link){
   
   S <- page %>% html_nodes(".nameMusic") %>% html_text() %>% 
   unique() %>% length()
-  
-  P <- pop_page %>% html_nodes(".text") %>% html_text() %>% 
-    tail(1) %>% 
-    str_extract(., "(?<=está em )(.*)(?= pontos)") %>% 
-    str_replace(",", ".") %>% as.numeric() 
+
+  P <- NA
+
+  try(P <- pop_func(artist_link),FALSE)
   
   # Creating tibble
   res <- tibble(Artist = A, ParentGenre = B, Genres = G, Songs = S, Popularity = P, Link = artist_link)
@@ -155,7 +166,7 @@ plan(multisession)
 # Getting all artists' links from the website
 all_artists <- future_map_dfr(all_artists_links, ~p_scrap_artist(.))
 
-write.csv(all_artists,'artists-data.csv',row.names=TRUE)
+write.csv(all_artists,'artists-data.csv',row.names=FALSE, na="")
 
 
 # Extracts a single lyric from a song link
@@ -163,15 +174,16 @@ get_lyric <- function(song_link){
 
   # Reading the html page
   page  <- read_html(paste0("https://www.vagalume.com.br", song_link))
-  lyric <- page %>% html_nodes("#lyrics") 
+  lyric_text <- NA
+  try(lyric <- page %>% html_nodes("#lyrics"), FALSE)
   
   # Creating sep to replace linebreaks with ". "
   dummy <- xml_node(read_xml("<doc><span>. </span></doc>"), "span")
 
   # Replacing line-breaks
-  xml_add_sibling(xml_nodes(lyric, "br"), dummy)
+  try(xml_add_sibling(xml_nodes(lyric, "br"), dummy), FALSE)
   
-  res <- lyric %>% html_text()
+  try(lyric_text <- lyric %>% html_text(), FALSE)
 
   G <- NA
   
@@ -183,7 +195,7 @@ get_lyric <- function(song_link){
   } 
   
   # Creating tibble
-  tib <- tibble(Lyric = res, Language = G)
+  tib <- tibble(Lyric = lyric_text, Language = G, LyricLink = song_link)
   return(tib)
   
 }
@@ -219,7 +231,7 @@ plan(multisession)
 all_songs_links <- future_map_dfr(all_artists_links, ~p_get_lyrics_links(.))
 
 # Gerenating a safe version with possibly()
-p_get_lyric <- possibly(get_lyric, otherwise = tibble(Lyric = NA, Language = NA))
+p_get_lyric <- possibly(get_lyric, otherwise = tibble(Lyric = NA, Language = NA, LyricLink = NA))
 
 # Mapping it through the all_artists_links vector
 plan(multisession)
@@ -227,10 +239,10 @@ all_lyrics <- future_map_dfr(all_songs_links$SLink, ~p_get_lyric(.), .progress =
 
 # Adding it to the dataframe
 all_lyrics$Lyric<- all_lyrics$Lyric %>% str_replace_all("\\. \\. ", ". ")
-all_songs_links$Lyric <- all_lyrics$Lyric 
-all_songs_links$Language <- all_lyrics$Language 
 
-write.csv(all_songs_links,'lyrics-data.csv',row.names=TRUE)
+all_songs_links <- left_join(all_songs_links, all_lyrics, by = c("SLink" = "LyricLink"))
+
+write.csv(all_songs_links,'lyrics-data.csv',row.names=FALSE, na="")
 
 
 
