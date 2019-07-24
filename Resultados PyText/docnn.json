@@ -1,0 +1,47 @@
+{
+  "version": 8,
+  "task": {
+    "DocumentClassificationTask": {
+      "data": {
+        "source": {
+          "TSVDataSource": {
+            "field_names": ["label", "text"],
+            "train_filename": "data/train_data.tsv",
+            "test_filename": "data/test_data.tsv",
+            "eval_filename": "data/test_data.tsv"
+          }
+        }
+      },
+      "model": {
+        "DocModel": {
+          "representation": {
+            "DocNNRepresentation": {
+              "dropout": 0.6
+            }
+          },
+          "embedding": {
+            "embed_dim": 300,
+            "embedding_init_strategy": "zero",
+            "export_input_names": [
+                "tokens_vals"
+            ],
+            "pretrained_embeddings_path": "cc.pt.300.vec"
+          }
+        }
+      },
+      "trainer": {
+        "epochs": 10,
+        "early_stop_after": 2
+      },
+      "metric_reporter": {
+        "output_path": "test_out.txt",
+        "model_select_metric": "accuracy",
+        "target_label": null,
+        "text_column_names": [
+            "text"
+        ]
+      }
+    }
+  },
+  "export_torchscript_path": "/tmp/new_docnn.pt1"
+}
