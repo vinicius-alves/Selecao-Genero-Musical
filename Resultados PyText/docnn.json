@@ -15,8 +15,14 @@
       "model": {
         "DocModel": {
           "representation": {
-            "DocNNRepresentation": {
-              "dropout": 0.6
+            "BiLSTMDocAttention": {
+              "dropout": 0.8,
+              "lstm": {
+                "dropout": 0.4,
+                "lstm_dim": 32,
+                "num_layers": 1,
+                "bidirectional": true
+              }
             }
           },
           "embedding": {
@@ -25,12 +31,27 @@
             "export_input_names": [
                 "tokens_vals"
             ],
-            "pretrained_embeddings_path": "cc.pt.300.vec"
+            "pretrained_embeddings_path": "glove_s300.txt"
+          },
+          "output_layer": {
+            "loss": {
+                "CrossEntropyLoss": {}
+            },
+            "label_weights": {
+              "Regional_Sertanejo_Forró_Country": 3.2,
+              "Gospel/Religioso": 3.6,
+              "MPB_Bossa_Nova": 7.8,
+              "Pagode_Samba": 10.0,
+              "Rock_Pop/Rock_Rock_Alternativo": 11.0,
+              "Rap_Hip_Hop": 20.0,
+              "Funk_Carioca": 29.0,
+              "Pop": 35.0
+            }
           }
         }
       },
       "trainer": {
-        "epochs": 10,
+        "epochs": 15,
         "early_stop_after": 2
       },
       "metric_reporter": {
