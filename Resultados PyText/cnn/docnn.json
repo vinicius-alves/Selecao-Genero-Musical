@@ -1,0 +1,69 @@
+{
+  "version": 8,
+  "task": {
+    "DocumentClassificationTask": {
+      "data": {
+        "source": {
+          "TSVDataSource": {
+            "field_names": ["label", "text"],
+            "train_filename": "data/train_data.tsv",
+            "test_filename": "data/test_data.tsv",
+            "eval_filename": "data/test_data.tsv"
+          }
+        }
+      },
+      "model": {
+        "DocModel": {
+          "representation": {
+            "DocNNRepresentation": {
+              "dropout": 0.6,
+              "cnn": {
+                "kernel_num": 100,
+                "kernel_sizes": [
+                    3,
+                    4
+                ]
+              }
+            }
+          },
+          "embedding": {
+            "embed_dim": 300,
+            "embedding_init_strategy": "zero",
+            "export_input_names": [
+                "tokens_vals"
+            ],
+            "pretrained_embeddings_path": "glove_s300.txt"
+          },
+          "output_layer": {
+            "loss": {
+                "CrossEntropyLoss": {}
+            },
+            "label_weights": {
+              "Regional_Sertanejo_Forró_Country": 3.2,
+              "Gospel/Religioso": 3.6,
+              "MPB_Bossa_Nova": 7.8,
+              "Pagode_Samba": 10.0,
+              "Rock_Pop/Rock_Rock_Alternativo": 11.0,
+              "Rap_Hip_Hop": 20.0,
+              "Funk_Carioca": 29.0,
+              "Pop": 35.0
+            }
+          }
+        }
+      },
+      "trainer": {
+        "epochs": 15,
+        "early_stop_after": 2
+      },
+      "metric_reporter": {
+        "output_path": "test_out.txt",
+        "model_select_metric": "accuracy",
+        "target_label": null,
+        "text_column_names": [
+            "text"
+        ]
+      }
+    }
+  },
+  "export_torchscript_path": "/tmp/new_docnn.pt1"
+}
