@@ -38,14 +38,14 @@
                 "CrossEntropyLoss": {}
             },
             "label_weights": {
-              "Regional_Sertanejo_Forró_Country": 3.2,
-              "Gospel/Religioso": 3.6,
-              "MPB_Bossa_Nova": 7.8,
-              "Pagode_Samba": 10.0,
-              "Rock_Pop/Rock_Rock_Alternativo": 11.0,
+              "Regional_Sertanejo_Forró_Country": 3.3,
+              "Gospel/Religioso": 3.7,
+              "MPB_Bossa_Nova": 7.9,
+              "Pagode_Samba": 10.7,
+              "Rock_Pop/Rock_Rock_Alternativo": 11.2,
               "Rap_Hip_Hop": 20.0,
-              "Funk_Carioca": 29.0,
-              "Pop": 35.0
+              "Funk_Carioca": 29.3,
+              "Pop": 34.9
             }
           }
         }
