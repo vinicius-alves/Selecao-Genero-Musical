@@ -1,5 +1,5 @@
 # Seleção de Gênero Músical
-Este é software é parte do projeto final de graduação em Engenharia de Computação e Informação na [Universidade Federal do Rio de Janeiro](http://www.poli.ufrj.br/).
+Este software é parte do projeto final de graduação em Engenharia de Computação e Informação na [Universidade Federal do Rio de Janeiro](http://www.poli.ufrj.br/).
 
 
 ## Requisitos
