@@ -1,14 +1,8 @@
 # Seleção de Gênero Músical
-Este software é parte do projeto final de graduação em Engenharia de Computação e Informação na [Universidade Federal do Rio de Janeiro](http://www.poli.ufrj.br/).
-
-
-## Requisitos
-
-- [Pytext](https://github.com/facebookresearch/pytext)
-
+Este software é parte do meu projeto de mestrado em Ciências da Computação USP.
 
 ##  Autor
 - [Vinicius Almeida Alves](https://github.com/vinicius-alves)
 
 ## Orientador
-- [Flávio Luis de Mello, D.Sc.](http://www.del.ufrj.br/~fmello) 
+- [Kelly Rosa Braghetto, D.Sc.](https://www.ime.usp.br/~kellyrb/) 
